@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>MOON</title>
+<link rel="stylesheet" th:href="@{/moon/css/bootstrap.css}" />
+<link rel="stylesheet" th:href="@{/icon/css/font-awesome.min.css}" />
+</head>
+<body class="bg-c">
+	<div class="container-fluid" id="app">
+		<div class="row">
+			<div class="col text-center bg-success text-white shadow">AMQ</div>
+		</div>
+		<div class="form-inline mt-3">
+			<input type="text" class="form-control form-control-sm" id="task" />
+			<button class="btn btn-sm btn-success ml-1" onclick="addToMQ();">加入MQ</button>
+			<button class="btn btn-sm btn-danger ml-1" onclick="getFromMQ();">从MQ取出</button>
+		</div>
+	</div>
+	<!-- js -->
+	<script th:src="@{/moon/js/jquery.js}"></script>
+	<script th:src="@{/moon/js/vue.js}"></script>
+	<script th:src="@{/layer/layer.js}"></script>
+	<script th:inline="javascript">
+		//addToMQ
+		function addToMQ() {
+			$.post("/mq/addToMQ", {
+				task : $("#task").val()
+			}, function(data) {
+				layer.msg(data);
+			});
+		}
+
+		//getFromMQ
+		function getFromMQ() {
+			$.post("/mq/getFromMQ", {}, function(data) {
+				layer.msg(data);
+			});
+		}
+	</script>
+</body>
+</html>

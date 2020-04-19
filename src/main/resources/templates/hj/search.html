@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>MOON</title>
+<link rel="stylesheet" th:href="@{/moon/css/bootstrap.css}" />
+<link rel="stylesheet" th:href="@{/icon/css/font-awesome.min.css}" />
+</head>
+<body class="bg-c">
+	<div class="container-fluid" id="app">
+		<div class="row">
+			<div class="col text-center bg-success text-white shadow">全文检索</div>
+		</div>
+		<div class="form-inline mt-3">
+			<input type="text" class="form-control form-control-sm" id="word" />
+			<button class="btn btn-sm btn-outline-success" @click="showdata();">搜索</button>
+		</div>
+		<div class="mt-2">
+			<div v-for="p in poetrydata">
+				<div class="card border-light">
+					<div class="card-header font-weight-bold">{{p.title}}</div>
+					<div class="card-body">{{p.content}}</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- js -->
+	<script th:src="@{/moon/js/jquery.js}"></script>
+	<script th:src="@{/moon/js/vue.js}"></script>
+	<script th:src="@{/layer/layer.js}"></script>
+	<script th:inline="javascript">
+		//app
+		var app = new Vue({
+			el : "#app",
+			data : {
+				poetrydata : []
+			},
+			methods : {
+				showdata : function() {
+					$.post("/moon/Poetry/selectByWord", {
+						word : $("#word").val()
+					}, function(data) {
+						app.poetrydata = data;
+					});
+				}
+			}
+		});
+	</script>
+</body>
+</html>

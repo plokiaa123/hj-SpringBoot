@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>MOON</title>
+<link rel="stylesheet" th:href="@{/moon/css/bootstrap.css}" />
+<link rel="stylesheet" th:href="@{/icon/css/font-awesome.min.css}" />
+</head>
+<body class="bg-a">
+	<div class="container-fluid" id="app">
+		<div class="row">
+			<div class="col text-center bg-warning text-white shadow">多条件</div>
+		</div>
+		<div class="form-inline mt-2">
+			<!-- 院系 -->
+			院系<input type="text" class="form-control form-control-sm ml-1 mr-1"
+				v-model="department"/>
+			<!-- 性别 -->
+			性别<select class="form-control form-control-sm ml-1" v-model="sex">
+				<option value="">全部</option>
+				<option value="M">男</option>
+				<option value="F">女</option>
+			</select>
+			<!-- 搜索 -->
+			<button class="btn btn-sm btn-outline-success ml-1"
+				@click="showstudata();">查询</button>
+		</div>
+		<div class="mt-2">
+			<table class="table table-sm">
+				<tr v-for="s in studata">
+					<td>{{s.id}}</td>
+					<td>{{s.name}}</td>
+					<td>{{s.sex|filterSex}}</td>
+					<td>{{s.birth}}</td>
+					<td>{{s.department}}</td>
+					<td>{{s.address}}</td>
+				</tr>
+			</table>
+		</div>
+		<div class="mt-2">
+			<!-- 分页条 -->
+			<div id="pager" class="pagination pagination-sm"></div>
+		</div>
+	</div>
+	<!-- js -->
+	<script th:src="@{/moon/js/jquery.js}"></script>
+	<script th:src="@{/moon/js/vue.js}"></script>
+	<script th:src="@{/layer/layer.js}"></script>
+	<script th:src="@{/moon/js/jquery.time.js}"></script>
+	<script th:src="@{/page/jqpaginator.js}"></script>
+	<script th:inline="javascript">
+		//页码
+		var currpage = 1;
+		
+		var app=new Vue({
+			el : "#app",
+			data:{
+				department : "",
+				sex : "",
+				studata : []
+			},
+			methods:{
+				showstudata : function(){
+					$.post("/moon/Student/selectByMulti",{
+						department : this.department,
+						sex : this.sex,
+						pageNum : currpage,
+						pageSize : "3"
+					},function(data){
+						app.studata=data.list;
+						$('#pager').jqPaginator('option', {
+							totalPages: data.pagecount
+						});
+					});
+				}
+			},
+			filters : {
+				filterSex:function(val){
+					return val=="M"?"男":"女"
+				}
+			}
+		});
+		
+		$('#pager').jqPaginator({
+		    totalPages: 100,
+		    currentPage: 1,
+		    /* 每次点击页数都会触发这个方法 */
+		    onPageChange: function (num, type) {
+		    	currpage=num;
+		    	app.showstudata();
+		    }
+		});
+	</script>
+</body>
+</html>
